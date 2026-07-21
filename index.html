@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentación de Migración: Consulta Práctica Web</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Mermaid JS -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <style>
+    :root {
+      --bg-body: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-sidebar: #0f172a;
+      --text-sidebar: #94a3b8;
+      --text-sidebar-active: #ffffff;
+      --bg-sidebar-hover: #1e293b;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #0ea5e9;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --code-bg: #1e293b;
+      --diagram-bg: #ffffff;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    html.dark {
+      --bg-body: #0b0f19;
+      --bg-card: #111827;
+      --bg-sidebar: #030712;
+      --text-sidebar: #6b7280;
+      --text-sidebar-active: #f9fafb;
+      --bg-sidebar-hover: #1f2937;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-color: #1f2937;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --accent: #38bdf8;
+      --code-bg: #030712;
+      --diagram-bg: #111827;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      line-height: 1.6;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Sidebar Navigation */
+    aside.sidebar {
+      width: 280px;
+      background-color: var(--bg-sidebar);
+      color: var(--text-sidebar);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      overflow-y: auto;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .badge {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+
+    .nav-list {
+      list-style: none;
+      padding: 1rem 0;
+      flex: 1;
+    }
+
+    .nav-item a {
+      display: block;
+      padding: 0.65rem 1.5rem;
+      color: var(--text-sidebar);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-item a:hover, .nav-item a.active {
+      color: var(--text-sidebar-active);
+      background-color: var(--bg-sidebar-hover);
+      border-left: 4px solid var(--primary);
+    }
+
+    /* Header Bar */
+    header.topbar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 280px;
+      height: 64px;
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 90;
+      box-shadow: var(--shadow);
+    }
+
+    .topbar-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--text-main);
+    }
+
+    .toggle-btn {
+      background: var(--bg-body);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn:hover {
+      background: var(--border-color);
+    }
+
+    /* Main Content */
+    main.content {
+      margin-left: 280px;
+      margin-top: 64px;
+      padding: 2.5rem;
+      flex: 1;
+      max-width: 1300px;
+    }
+
+    section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    h1, h2, h3, h4 {
+      color: var(--text-main);
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    h1 { font-size: 2.2rem; margin-bottom: 1.5rem; line-height: 1.2; }
+    h2 { font-size: 1.5rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; margin-top: 0.5rem; }
+    h3 { font-size: 1.2rem; margin-top: 1.5rem; color: var(--primary); }
+    h4 { font-size: 1rem; margin-top: 1rem; }
+
+    p { margin-bottom: 1rem; color: var(--text-main); }
+    ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; color: var(--text-main); }
+    li { margin-bottom: 0.35rem; }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background-color: rgba(37, 99, 235, 0.08);
+      color: var(--primary);
+      padding: 0.85rem 1rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.015);
+    }
+
+    /* Diagram Card */
+    .diagram-container {
+      background-color: var(--diagram-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+
+    .diagram-explanation {
+      background-color: rgba(14, 165, 233, 0.08);
+      border-left: 4px solid var(--accent);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* Code Blocks */
+    pre code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      padding: 1.25rem !important;
+      margin: 1rem 0;
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .tech-card {
+      background: var(--bg-body);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .tech-card h4 {
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .phase-badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      background: var(--primary);
+      color: white;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 992px) {
+      aside.sidebar { width: 220px; }
+      header.topbar { left: 220px; }
+      main.content { margin-left: 220px; }
+    }
+
+    @media (max-width: 768px) {
+      aside.sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+      aside.sidebar.open { transform: translateX(0); }
+      header.topbar { left: 0; }
+      main.content { margin-left: 0; padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>Consulta Práctica</h2>
+      <span class="badge">v2.0 Web</span>
+    </div>
+    <ul class="nav-list">
+      <li class="nav-item"><a href="#introduccion">1. Introducción y Objetivo</a></li>
+      <li class="nav-item"><a href="#comparativa">2. Comparativa Legacy vs. Web</a></li>
+      <li class="nav-item"><a href="#arquitectura">3. Clean Architecture & Capas</a></li>
+      <li class="nav-item"><a href="#diagramas">4. Diagramas UML (Mermaid)</a></li>
+      <li class="nav-item"><a href="#modelo-er">5. Modelo de Datos & ETL</a></li>
+      <li class="nav-item"><a href="#carpetas">6. Estructura de Carpetas</a></li>
+      <li class="nav-item"><a href="#stack">7. Stack Tecnológico</a></li>
+      <li class="nav-item"><a href="#migracion">8. Plan de Migración (Phases)</a></li>
+      <li class="nav-item"><a href="#seguridad">9. Seguridad & HIPAA/LGPD</a></li>
+      <li class="nav-item"><a href="#conclusiones">10. Conclusiones</a></li>
+    </ul>
+  </aside>
+
+  <!-- Topbar Header -->
+  <header class="topbar">
+    <div class="topbar-title">Documentación Técnica de Arquitectura & Migración</div>
+    <button class="toggle-btn" id="themeToggleBtn">
+      <span id="themeIcon">🌙</span> <span id="themeText">Modo Oscuro</span>
+    </button>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="content">
+
+    <!-- HERO TITLE -->
+    <div style="margin-bottom: 2rem;">
+      <h1>Plan de Migración & Arquitectura Web: Consulta Práctica</h1>
+      <p style="font-size: 1.1rem; color: var(--text-muted);">
+        Transformación integral del software médico legacy (Visual Basic / MS Access) hacia una arquitectura moderna, ultra-ligera y altamente escalable con <strong>Node.js (Fastify)</strong>, <strong>Supabase (PostgreSQL / Auth / Storage / Realtime)</strong> y <strong>Cloudflare Pages & R2</strong>.
+      </p>
+    </div>
+
+    <!-- 1. INTRODUCCIÓN Y OBJETIVO -->
+    <section id="introduccion">
+      <h2>1. Introducción y Objetivo de la Migración</h2>
+      <p>
+        El sistema legacy <strong>"Consulta Práctica"</strong> ha brindado un servicio efectivo en consultorios médicos para el registro de expedientes, emisión de recetas, agenda de citas y diagnósticos CIE-10. Sin embargo, su arquitectura basada en archivos monolíticos Microsoft Access (<code>.mdb</code>), integración COM/OLE con Microsoft Word y ejecución exclusiva sobre escritorio Windows presenta severas limitaciones operativas:
+      </p>
+      <ul>
+        <li><strong>Riesgo de Corrupción de Datos:</strong> El motor DAO/MS Access carece de control de concurrencia multiusuario real en red local (LAN), produciendo bloqueos de archivos o corrupción en tablas ante caídas de red o cortes de energía.</li>
+        <li><strong>Falta de Movilidad y Accesibilidad:</strong> Inexistencia de soporte para dispositivos móviles, tablets o acceso remoto fuera del consultorio.</li>
+        <li><strong>Dependencia Tecnológica Obsoleta:</strong> Integración OLE rígida con Microsoft Word para reportes e imposibilidad de ejecutar en sistemas no-Windows.</li>
+        <li><strong>Proceso Manual de Respaldos:</strong> Dependencia del usuario para ejecutar copias manuales en memorias USB, vulnerando la continuidad operativa y la seguridad.</li>
+      </ul>
+      <p>
+        <strong>Objetivo General:</strong> Diseñar y documentar la migración del sistema a una plataforma Web SPA + API REST Serverless/Cloud, aplicando <strong>Clean Architecture</strong> para desacoplar el dominio clínico de la infraestructura tecnológica, maximizando el rendimiento en computadoras de bajos recursos y garantizando alta disponibilidad sin costos elevados.
+      </p>
+    </section>
+
+    <!-- 2. COMPARATIVA LEGACY VS. WEB -->
+    <section id="comparativa">
+      <h2>2. Comparativa Arquitectura Legacy vs. Arquitectura Web Propuesta</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Criterio</th>
+              <th>Sistema Legacy (Desktop / MS Access)</th>
+              <th>Nueva Arquitectura Web Propuesta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Arquitectura General</strong></td>
+              <td>Monolito de escritorio (Windows GUI + motor embebido MDB).</td>
+              <td>SPA en Frontend (Cloudflare Pages) + API REST Backend (Node.js/Fastify) + BaaS (Supabase).</td>
+            </tr>
+            <tr>
+              <td><strong>Persistencia de Datos</strong></td>
+              <td>Ficheros MS Access <code>.mdb</code> (Límite 2 GB, sin MVCC).</td>
+              <td>PostgreSQL 16 Administrado en Supabase (Transaccional ACID, búsquedas FTS, RLS).</td>
+            </tr>
+            <tr>
+              <td><strong>Concurrencia Multi-usuario</strong></td>
+              <td>Monopuesto o LAN básica con bloqueos de tabla pesados.</td>
+              <td>Concurrencia real ilimitada mediante MVCC y Supabase Realtime para agendas sincronizadas.</td>
+            </tr>
+            <tr>
+              <td><strong>Consumo de Recursos (RAM/CPU)</strong></td>
+              <td>Ejecución local pesada con dependencias de MS Office OLE.</td>
+              <td>Backend Fastify ultra-ligero (<35 MB RAM), ejecutable en mini-servidores o VPS económicos.</td>
+            </tr>
+            <tr>
+              <td><strong>Autenticación y Permisos</strong></td>
+              <td>Contraseña maestra local y claves simples en tablas Access.</td>
+              <td>Supabase Auth (JWT, tokens con rotación, RBAC estricto y Row Level Security nativo en BD).</td>
+            </tr>
+            <tr>
+              <td><strong>Emisión de Recetas y Reportes</strong></td>
+              <td>Automatización OLE/COM hacia MS Word (requiere Office instalado).</td>
+              <td>Generación nativa PDF en backend/cliente mediante PDFKit / templates HTML semánticos.</td>
+            </tr>
+            <tr>
+              <td><strong>Almacenamiento de Adjuntos</strong></td>
+              <td>Rutas locales fijas en disco duro para imágenes/PDFs.</td>
+              <td>Bucket privado en Supabase Storage / Cloudflare R2 con URLs pre-firmadas temporales.</td>
+            </tr>
+            <tr>
+              <td><strong>Respaldos y Seguridad</strong></td>
+              <td>Copia manual a memorias USB. Riesgo de pérdida física.</td>
+              <td>Backups automatizados continuos (Point-in-Time Recovery) en la nube. Cifrado TLS/AES-256.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. CLEAN ARCHITECTURE & CAPAS -->
+    <section id="arquitectura">
+      <h2>3. Arquitectura Clean Architecture (Capas y Reglas)</h2>
+      <p>
+        Para asegurar que el núcleo de la lógica médica permanezca agnóstico a cambios en proveedores cloud o librerías de infraestructura, la aplicación se estructura siguiendo los principios de <strong>Clean Architecture</strong> (Uncle Bob):
+      </p>
+      <div class="tech-grid">
+        <div class="tech-card">
+          <h4>1. Domain Layer (Núcleo de Dominio)</h4>
+          <p>Contiene las entidades puras (<code>Patient</code>, <code>MedicalHistory</code>, <code>CIE10Diagnosis</code>, <code>Prescription</code>) y Value Objects (<code>ICD10Code</code>, <code>PatientID</code>). Implementa la regla crítica de negocio: <em>Inmutabilidad estricta del historial clínico una vez guardado</em> (<code>isLocked = true</code>).</p>
+        </div>
+        <div class="tech-card">
+          <h4>2. Application Layer (Casos de Uso)</h4>
+          <p>Orquesta los flujos de la aplicación (ej. <code>RegisterClinicalConsultationUseCase</code>, <code>SearchICD10UseCase</code>, <code>GeneratePrescriptionPdfUseCase</code>). Define las interfaces/puertos para repositorios y servicios de infraestructura.</p>
+        </div>
+        <div class="tech-card">
+          <h4>3. Infrastructure Layer (Implementación)</h4>
+          <p>Implementa los adaptadores técnicos: cliente Supabase SDK, repositorios de PostgreSQL, motor de búsquedas de texto completo, servicios de almacenamiento en S3/Cloudflare R2 y generador de archivos PDF.</p>
+        </div>
+        <div class="tech-card">
+          <h4>4. Interface Adapters / API Layer</h4>
+          <p>Transforma los datos de entrada/salida HTTP. Controladores REST ultra-rápidos construidos sobre <strong>Node.js + Fastify</strong>, middlewares de autenticación JWT y validadores de schemas DTO.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. DIAGRAMAS UML (MERMAID) -->
+    <section id="diagramas">
+      <h2>4. Diagramas UML (Especificación de la Nueva Arquitectura)</h2>
+
+      <!-- Diagrama 1: Componentes / Arquitectura -->
+      <h3>Diagrama 1: Arquitectura de Componentes en Capas</h3>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph TD
+    subgraph Frontend_Presentation["Presentation Layer (Cloudflare Pages)"]
+        ReactSPA["React SPA (Vite + Tailwind)"]
+        QueryClient["TanStack Query (Cache/State)"]
+        SupabaseJS["Supabase Auth / Realtime Client"]
+    end
+
+    subgraph Interface_Adapters["Interface Adapters / API (Node.js + Fastify)"]
+        FastifyRoutes["Fastify HTTP Controllers"]
+        AuthMiddleware["JWT / Role Middleware"]
+        DTOSchemas["Zod / JSON Schemas"]
+    end
+
+    subgraph Application_Layer["Application Layer (Use Cases & Ports)"]
+        UC_Consultation["RegisterConsultation UseCase"]
+        UC_Auth["AuthenticateUser UseCase"]
+        UC_CIE10["SearchCIE10 UseCase"]
+        UC_Prescription["GeneratePrescription UseCase"]
+        
+        IPatientRepo["IPatientRepository (Port)"]
+        IHistoryRepo["IMedicalHistoryRepository (Port)"]
+        IPdfService["IPdfGeneratorService (Port)"]
+    end
+
+    subgraph Domain_Layer["Domain Layer (Entities & Rules)"]
+        PatientEntity["Patient Entity"]
+        HistoryEntity["MedicalHistory Entity (Immutable)"]
+        CIE10Entity["CIE10 Entity"]
+        PrescriptionEntity["Prescription Entity"]
+    end
+
+    subgraph Infrastructure_Layer["Infrastructure Layer (Cloud / BaaS)"]
+        SupaPostgres[("Supabase PostgreSQL DB + RLS")]
+        SupaAuth["Supabase Auth Engine"]
+        SupaStorage["Supabase Storage / R2 (PDFs/Photos)"]
+        PDFGenerator["PDFKit Generator Service"]
+    end
+
+    ReactSPA --> FastifyRoutes
+    ReactSPA --> SupabaseJS
+    FastifyRoutes --> AuthMiddleware
+    FastifyRoutes --> UC_Consultation
+    FastifyRoutes --> UC_CIE10
+    
+    UC_Consultation --> IPatientRepo
+    UC_Consultation --> IHistoryRepo
+    UC_Consultation --> IPdfService
+    UC_Consultation --> HistoryEntity
+    UC_Consultation --> PatientEntity
+
+    IPatientRepo -.-> SupaPostgres
+    IHistoryRepo -.-> SupaPostgres
+    IPdfService -.-> PDFGenerator
+    SupabaseJS -.-> SupaAuth
+    SupabaseJS -.-> SupaStorage
+        </pre>
+      </div>
+      <div class="diagram-explanation">
+        <strong>Descripción Técnica:</strong> Muestra la estricta orientación de dependencias hacia el centro (Dominio). La interfaz web SPA en Cloudflare interactúa con el backend Fastify para la lógica de negocio y directamente con Supabase para Auth/Storage/Realtime mediante Row Level Security (RLS).
+      </div>
+
+      <!-- Diagrama 2: Diagrama de Clases -->
+      <h3>Diagrama 2: Diagrama de Clases UML del Dominio y Capas</h3>
+      <div class="diagram-container">
+        <pre class="mermaid">
+classDiagram
+    class Patient {
+        +UUID id
+        +String fullName
+        +Date birthDate
+        +String gender
+        +String photoUrl
+        +Boolean isProtected
+        +getAge() Int
+    }
+
+    class MedicalHistory {
+        +UUID id
+        +UUID patientId
+        +DateTime createdAt
+        +String note
+        +String cie10Code
+        +Boolean isLocked
+        +lockHistory()
+        +addPrescription(Prescription p)
+    }
+
+    class CIE10Diagnosis {
+        +String code
+        +String description
+        +String category
+    }
+
+    class Prescription {
+        +UUID id
+        +UUID historyId
+        +List~Medication~ medications
+        +String customIndications
+        +DateTime nextAppointment
+    }
+
+    class Medication {
+        +String name
+        +String dosage
+        +String frequency
+        +Int durationDays
+    }
+
+    class User {
+        +UUID id
+        +String email
+        +UserRole role
+        +String fullName
+        +Boolean isActive
+    }
+
+    class UserRole {
+        <<enumeration>>
+        ADMINISTRATOR
+        DOCTOR
+        RECEPTIONIST
+    }
+
+    class IMedicalHistoryRepository {
+        <<interface>>
+        +save(MedicalHistory history) Promise~void~
+        +findById(UUID id) Promise~MedicalHistory~
+        +findByPatient(UUID patientId) Promise~List~MedicalHistory~~
+    }
+
+    MedicalHistory "1" *-- "0..1" Prescription : contains
+    Prescription "1" *-- "1..*" Medication : details
+    Patient "1" -- "0..*" MedicalHistory : has
+    MedicalHistory "0..*" -- "1" CIE10Diagnosis : categorized_by
+    User "1" -- "1" UserRole : assigned
+    IMedicalHistoryRepository ..> MedicalHistory : manages
+        </pre>
+      </div>
+      <div class="diagram-explanation">
+        <strong>Descripción Técnica:</strong> Representa el modelo orientado a objetos del dominio clínico. Se destaca la composición entre <code>MedicalHistory</code> y <code>Prescription</code>, así como la invariante <code>lockHistory()</code> que congela la edición del expediente.
+      </div>
+
+      <!-- Diagrama 3: Casos de Uso -->
+      <h3>Diagrama 3: Diagrama de Casos de Uso</h3>
+      <div class="diagram-container">
+        <pre class="mermaid">
+graph LR
+    subgraph Actores
+        Doctor["👨‍⚕️ Médico Especialista"]
+        Admin["🔑 Médico Administrador"]
+        Secretary["👩‍💼 Secretaria / Asistente"]
+    end
+
+    subgraph CasosDeUso["Sistema Consulta Práctica Web"]
+        UC1("(UC-1: Iniciar Sesión JWT)")
+        UC2("(UC-2: Buscar / Registrar Paciente)")
+        UC3("(UC-3: Consultar Catálogo CIE-10)")
+        UC4("(UC-4: Crear Nota Médica Tripartita)")
+        UC5("(UC-5: Emitir e Imprimir Receta PDF)")
+        UC6("(UC-6: Agendar Cita en Realtime)")
+        UC7("(UC-7: Administrar Usuarios y Clave Maestra)")
+        UC8("(UC-8: Exportar Base de Datos / Backups)")
+    end
+
+    Doctor --> UC1
+    Doctor --> UC2
+    Doctor --> UC3
+    Doctor --> UC4
+    Doctor --> UC5
+    Doctor --> UC6
+
+    Secretary --> UC1
+    Secretary --> UC2
+    Secretary --> UC6
+
+    Admin --> UC1
+    Admin --> UC7
+    Admin --> UC8
+    Admin --> UC4
+        </pre>
+      </div>
+      <div class="diagram-explanation">
+        <strong>Descripción Técnica:</strong> Identifica el control de acceso por roles (RBAC). El personal de secretaría puede gestionar pacientes y citas sin acceso a las notas clínicas confidenciales, salvaguardando la privacidad.
+      </div>
+
+      <!-- Diagrama 4: Secuencia - Autenticación JWT -->
+      <h3>Diagrama 4: Diagrama de Secuencia 1 - Autenticación & Control de Acceso (JWT)</h3>
+      <div class="diagram-container">
+        <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor User as Usuario (Médico/Secretaria)
+    participant SPA as React SPA (Frontend)
+    participant API as Fastify API Server
+    participant SupaAuth as Supabase Auth Engine
+    participant DB as PostgreSQL (RLS)
+
+    User->>SPA: Ingresa Credenciales (Email/Password)
+    SPA->>API: POST /api/v1/auth/login
+    API->>SupaAuth: signInWithPassword(email, password)
+    SupaAuth-->>API: Retorna Session (Access Token JWT + Refresh Token)
+    API->>DB: Consultar Rol y Estado del Usuario
+    DB-->>API: User Record { id, role: 'DOCTOR' }
+    API-->>SPA: HTTP 200 { accessToken, userProfile, expiresAt }
+    SPA->>SPA: Almacena Token en Memoria / HTTP-Only Cookie
+    SPA-->>User: Redirige a Dashboard según Rol
+        </pre>
+      </div>
+      <div class="diagram-explanation">
+        <strong>Descripción Técnica:</strong> Describe el flujo de inicio de sesión multinivel con validación de tokens de corta duración y asignación de claims de rol para la seguridad en endpoints backend y en la base de datos Supabase.
+      </div>
+
+      <!-- Diagrama 5: Secuencia - Consulta Médica & PDF -->
+      <h3>Diagrama 5: Diagrama de Secuencia 2 - Creación de Consulta Médica & Generación de Receta PDF</h3>
+      <div class="diagram-container">
+        <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Doctor as Médico
+    participant SPA as React SPA
+    participant Fastify as Fastify API
+    participant UC as RegisterConsultation UseCase
+    participant DB as Supabase PostgreSQL
+    participant PDF as PDF Generator (PDFKit)
+    participant Storage as Supabase Storage / R2
+
+    Doctor->>SPA: Escribe Nota Médica, Selecciona CIE-10 y Fármacos
+    Doctor->>SPA: Clic en "Guardar y Emitir Receta"
+    SPA->>Fastify: POST /api/v1/consultations (Payload + JWT)
+    Fastify->>UC: execute(consultationDTO)
+    UC->>UC: Validar reglas de dominio e inmutabilidad
+    UC->>DB: INSERT INTO medical_histories (is_locked = TRUE)
+    UC->>DB: INSERT INTO prescriptions (...)
+    DB-->>UC: Record ID generado
+    UC->>PDF: generatePrescriptionPDF(prescriptionData)
+    PDF-->>UC: Buffer PDF generado
+    UC->>Storage: uploadPdf(buffer)
+    Storage-->>UC: Presigned Signed URL (PDF)
+    UC-->>Fastify: Result Success { historyId, pdfUrl }
+    Fastify-->>SPA: HTTP 201 Created { pdfUrl }
+    SPA->>SPA: Abre Modal / Imprime directamente Receta PDF
+        </pre>
+      </div>
+      <div class="diagram-explanation">
+        <strong>Descripción Técnica:</strong> Demuestra el proceso de consulta clínica completa. Al guardar, el historial médico pasa automáticante al estado inmutable (bloqueado para edición) y se genera una receta en PDF lista para ser enviada a la impresora o compartida.
+      </div>
+
+      <!-- Diagrama 6: Despliegue -->
+      <h3>Diagrama 6: Diagrama de Despliegue de Infraestructura Cloud / Serverless</h3>
+      <div class="diagram-container">
+        <pre class="mermaid">
+flowchart TB
+    subgraph Clients["Dispositivos del Consultorio / Remotos"]
+        PC["💻 PC Consultorio (Windows/Linux/Mac)"]
+        Tablet["📱 Tablet Médica (iPad/Android)"]
+    end
+
+    subgraph Edge_Layer["Cloudflare Edge Network"]
+        CDN["Cloudflare Pages (React SPA CDN)"]
+        R2["Cloudflare R2 (Assets Static Bucket)"]
+    end
+
+    subgraph Compute_Layer["App Server Node.js (Ultra-Light)"]
+        FastifyNode["Node.js + Fastify API (VPS / Render / Railway - 512MB RAM)"]
+    end
+
+    subgraph Supabase_Cloud["Supabase Cloud Platform (BaaS)"]
+        SupaPostgres[("PostgreSQL 16 DB (Row Level Security)")]
+        SupaAuthEngine["Supabase Auth (JWT Engine)"]
+        SupaBucket["Supabase Storage (Adjuntos / Fotos)"]
+        SupaRealtimeEngine["Realtime Engine (WebSockets)"]
+    end
+
+    PC -->|HTTPS| CDN
+    Tablet -->|HTTPS| CDN
+    CDN -->|API Calls / REST| FastifyNode
+    PC -->|Direct Auth/Storage| SupaAuthEngine
+    PC -->|Direct Auth/Storage| SupaBucket
+    FastifyNode -->|Pooler Connection| SupaPostgres
+    FastifyNode -->|Storage Upload| SupaBucket
+    Tablet -->|WebSockets Citas| SupaRealtimeEngine
+        </pre>
+      </div>
+      <div class="diagram-explanation">
+        <strong>Descripción Técnica:</strong> Muestra la topología de despliegue. El frontend estático corre distribuido en el CDN de Cloudflare Pages, la API Node.js/Fastify se ejecuta en un micro-servidor de ultra-bajo consumo y Supabase gestiona la persistencia en la nube.
+      </div>
+
+      <!-- Diagrama 7: ER Diagram -->
+      <h3>Diagrama 7: Diagrama Entidad-Relación (Modelo Relacional PostgreSQL)</h3>
+      <div class="diagram-container">
+        <pre class="mermaid">
+erDiagram
+    users ||--o{ medical_histories : registers
+    patients ||--o{ medical_histories : has
+    medical_histories ||--o| prescriptions : generates
+    medical_histories }|--|| cie10_diagnoses : classified_by
+    prescriptions ||--|{ prescription_items : contains
+    patients ||--o{ appointments : schedules
+    medical_histories ||--o{ medical_attachments : includes
+
+    users {
+        uuid id PK
+        string email
+        string password_hash
+        string full_name
+        string role
+        boolean is_active
+        timestamp created_at
+    }
+
+    patients {
+        uuid id PK
+        string full_name
+        date birth_date
+        string gender
+        string phone
+        string photo_url
+        boolean is_protected
+        timestamp created_at
+    }
+
+    cie10_diagnoses {
+        string code PK
+        string description
+        string category
+    }
+
+    medical_histories {
+        uuid id PK
+        uuid patient_id FK
+        uuid doctor_id FK
+        string cie10_code FK
+        text clinical_note
+        boolean is_locked
+        timestamp created_at
+    }
+
+    prescriptions {
+        uuid id PK
+        uuid history_id FK
+        text custom_indications
+        date next_appointment
+        timestamp created_at
+    }
+
+    prescription_items {
+        uuid id PK
+        uuid prescription_id FK
+        string medication_name
+        string dosage
+        string frequency
+        integer duration_days
+    }
+
+    appointments {
+        uuid id PK
+        uuid patient_id FK
+        timestamp appointment_date
+        string reason
+        string status
+    }
+
+    medical_attachments {
+        uuid id PK
+        uuid history_id FK
+        string file_url
+        string file_type
+        timestamp uploaded_at
+    }
+        </pre>
+      </div>
+      <div class="diagram-explanation">
+        <strong>Descripción Técnica:</strong> Esquema relacional optimizado para PostgreSQL. Normaliza la información de prescripciones, adjuntos y catálogos, resolviendo los defectos de integridad y limitación de espacio de las tablas planas legacy de MS Access.
+      </div>
+
+    </section>
+
+    <!-- 5. MODELO DE DATOS & ETL -->
+    <section id="modelo-er">
+      <h2>5. Modelo de Datos & Estrategia de Migración ETL</h2>
+      <p>
+        Para migrar la información existente desde los archivos <code>.mdb</code> de MS Access hacia el nuevo esquema relacional en PostgreSQL (Supabase), se implementará una herramienta ETL automatizada en Python o Node.js:
+      </p>
+      <h3>Fases del Pipeline ETL:</h3>
+      <ol>
+        <li><strong>Extracción (Extract):</strong> Conexión al archivo <code>.mdb</code> legacy utilizando controladores ODBC (<code>pyodbc</code> o <code>node-adodb</code>) para leer las tablas de Pacientes, Historias, Fármacos y Citas.</li>
+        <li><strong>Transformación & Saneamiento (Transform):</strong>
+          <ul>
+            <li>Conversión de codificación de texto de <code>Windows-1252</code> a <code>UTF-8</code> nativo.</li>
+            <li>Transformación de identificadores de clave enteros correlativos o cadenas a UUID v4 universales.</li>
+            <li>Parseo y validación de formatos de fechas erróneas o nulas.</li>
+            <li>Normalización del texto del lemario médico y correspondencia de diagnósticos con el código CIE-10 estándar.</li>
+          </ul>
+        </li>
+        <li><strong>Carga (Load):</strong> Inserción por lotes (batch loading) utilizando transacciones SQL en PostgreSQL a través del cliente Supabase, respetando las restricciones de clave foránea.</li>
+      </ol>
+    </section>
+
+    <!-- 6. ESTRUCTURA DE CARPETAS -->
+    <section id="carpetas">
+      <h2>6. Estructura de Carpetas Propuesta del Proyecto</h2>
+      <p>Árbol de directorios modular guiado por Clean Architecture para el backend Node.js (Fastify) y el frontend React SPA:</p>
+
+      <pre><code class="language-plaintext">consulta-practica-web/
+├── backend/                                 # API Node.js + Fastify (Clean Architecture)
+│   ├── src/
+│   │   ├── domain/                          # CAPA DE DOMINIO (Entidades puras y Reglas)
+│   │   │   ├── entities/                    # Patient.ts, MedicalHistory.ts, Prescription.ts
+│   │   │   ├── value-objects/               # ICD10Code.ts, PasscodeHash.ts
+│   │   │   ├── exceptions/                  # DomainException.ts
+│   │   │   └── ports/                       # Interfaces (IPatientRepository.ts, IPdfService.ts)
+│   │   ├── application/                     # CAPA DE APLICACIÓN (Casos de Uso)
+│   │   │   ├── use-cases/                   # RegisterConsultation.ts, AuthenticateUser.ts
+│   │   │   └── dtos/                        # ConsultationDTO.ts, PatientDTO.ts
+│   │   ├── infrastructure/                  # CAPA DE INFRAESTRUCTURA (Técnica)
+│   │   │   ├── supabase/                    # SupabaseClient.ts, PostgresPatientRepository.ts
+│   │   │   ├── pdf/                         # PdfKitService.ts (Generador de recetas)
+│   │   │   └── storage/                     # SupabaseStorageService.ts
+│   │   ├── interfaces/                      # ADAPTADORES HTTP / API (Fastify)
+│   │   │   ├── routes/                      # patientRoutes.ts, consultationRoutes.ts
+│   │   │   ├── middlewares/                 # authMiddleware.ts, roleGuard.ts
+│   │   │   └── etl/                         # mdb_migrator.py (Script de migración legacy)
+│   │   └── server.ts                        # Entry point Fastify (Bajo consumo RAM)
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── frontend/                                # CLIENTE WEB SPA (Cloudflare Pages)
+│   ├── src/
+│   │   ├── assets/                          # Estilos CSS, Tailwind Setup
+│   │   ├── components/                      # Componentes UI Reutilizables
+│   │   │   ├── ui/                          # Button.tsx, Dialog.tsx, Input.tsx (Shadcn)
+│   │   │   └── layout/                      # Sidebar.tsx, Topbar.tsx
+│   │   ├── features/                        # Módulos Funcionales
+│   │   │   ├── auth/                        # Componentes de Login y Contexto de Sesión
+│   │   │   ├── patients/                    # Expediente alfabético, Galería clínica
+│   │   │   ├── consultation/                # Formulario tripartito y buscador CIE-10
+│   │   │   ├── prescriptions/               # Emisión e impresión de Receta PDF
+│   │   │   └── appointments/                # Agenda interactiva (Realtime)
+│   │   ├── lib/                             # supabaseClient.ts (SDK Supabase JS)
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── package.json
+│   └── vite.config.ts
+│
+└── index.html                               # Entregable: Documentación técnica interactiva</code></pre>
+    </section>
+
+    <!-- 7. STACK TECNOLÓGICO -->
+    <section id="stack">
+      <h2>7. Stack Tecnológico Seleccionado y Justificación</h2>
+      <div class="tech-grid">
+        <div class="tech-card">
+          <h4>Backend: Node.js + Fastify</h4>
+          <p>Ofrece tiempos de respuesta ultrarrápidos en < 10ms, procesamiento asíncrono eficiente y un consumo de memoria RAM inferior a 35 MB, ideal para VPS o servidores locales modestos.</p>
+        </div>
+        <div class="tech-card">
+          <h4>Base de Datos & BaaS: Supabase</h4>
+          <p>Proveé PostgreSQL 16 administrado, motor de autenticación JWT, políticas RLS a nivel de fila y canales Realtime para sincronizar agendas entre médicos y secretarias al instante.</p>
+        </div>
+        <div class="tech-card">
+          <h4>Frontend: React 18 + Vite + Tailwind</h4>
+          <p>Creación de una interfaz fluida, ultra-rápida, optimizada para teclado y pantallas de cualquier resolución (PCs de escritorio o tablets médicas).</p>
+        </div>
+        <div class="tech-card">
+          <h4>Edge CDN: Cloudflare Pages & R2</h4>
+          <p>Despliegue global del frontend estático con latencia casi nula y almacenamiento de adjuntos en R2 sin costes por transferencia de datos (0 egress fees).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. PLAN DE MIGRACIÓN POR FASES -->
+    <section id="migracion">
+      <h2>8. Plan de Migración por Fases (Roadmap Incremental)</h2>
+      <p>Para asegurar que el consultorio no interrumpa su atención médica diaria, se propone un esquema de migración progresivo sin tiempo de inactividad (Zero Downtime):</p>
+      
+      <div style="margin-top: 1.5rem;">
+        <span class="phase-badge">Fase 1: Dominio & Setup de Infraestructura Cloud</span>
+        <p>Configuración del proyecto Supabase, tablas en PostgreSQL, buckets en Storage y definición de tipos de datos en Node.js/Fastify.</p>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <span class="phase-badge">Fase 2: Backend API & Motor PDF</span>
+        <p>Desarrollo de casos de uso del dominio, endpoints Fastify, lógica de inmutabilidad y servicio de generación de recetas en PDF en reemplazo de OLE Word.</p>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <span class="phase-badge">Fase 3: Script ETL & Migración de Datos de Prueba</span>
+        <p>Ejecución del pipeline de extracción desde el archivo <code>.mdb</code> legacy a una instancia de staging para validar la integridad de expedientes pasados.</p>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <span class="phase-badge">Fase 4: Frontend SPA & Módulos Clave</span>
+        <p>Construcción de la interfaz gráfica en React: expedientes, nota médica tripartita, buscador de diagnósticos CIE-10 y visor de PDFs.</p>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <span class="phase-badge">Fase 5: Operación en Paralelo & Pruebas en Vivo</span>
+        <p>Uso simultáneo del sistema legacy y el nuevo sistema web durante 1-2 semanas para verificar usabilidad, rendimiento y consistencia de datos.</p>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <span class="phase-badge">Fase 6: Despliegue Definitivo & Cierre Legacy</span>
+        <p>Migración delta final de los datos del día, conmutación oficial a la versión web en Cloudflare Pages y almacenamiento seguro en frío de la BD Access histórica.</p>
+      </div>
+    </section>
+
+    <!-- 9. SEGURIDAD & HIPAA/LGPD -->
+    <section id="seguridad">
+      <h2>9. Consideraciones de Seguridad & Cumplimiento Normativo</h2>
+      <ul>
+        <li><strong>Row Level Security (RLS) en Supabase:</strong> Garantiza a nivel de motor de base de datos que una secretaria solo pueda leer y escribir datos demográficos/citas, imposibilitando la lectura directa de notas clínicas o historiales médicos confidenciales.</li>
+        <li><strong>Protección de Datos e Inmutabilidad:</strong> Los registros de historiales médicos se marcan como <code>is_locked = TRUE</code> al guardarse, impidiendo la alteración posterior de notas para cumplir con regulaciones de fiabilidad legal médica.</li>
+        <li><strong>Cifrado en Transito y Reposo:</strong> Comunicaciones obligatorias bajo HTTPS / TLS 1.3 y almacenamiento cifrado bajo estándar AES-256 en Supabase PostgreSQL y Storage.</li>
+        <li><strong>Auditoría de Acceso:</strong> Registro de logs de auditoría para cada consulta o descarga de expediente clínico de paciente.</li>
+      </ul>
+    </section>
+
+    <!-- 10. CONCLUSIONES -->
+    <section id="conclusiones">
+      <h2>10. Conclusiones y Siguientes Pasos</h2>
+      <p>
+        La arquitectura propuesta resuelve integralmente los problemas de obsolescencia, fragilidad de datos y falta de movilidad del sistema <strong>Consulta Práctica</strong> legacy. La combinación de <strong>Node.js (Fastify)</strong> con <strong>Supabase</strong> y <strong>Cloudflare</strong> brinda una plataforma moderna, sumamente económica, mantenible y capaz de funcionar con fluidez impecable en computadoras de bajos recursos.
+      </p>
+      <h3>Siguientes Pasos Recomendados:</h3>
+      <ol>
+        <li>Crear el proyecto en Supabase y desplegar el esquema SQL inicial en PostgreSQL.</li>
+        <li>Ejecutar el script de prueba ETL sobre un archivo <code>.mdb</code> real para validar datos históricos.</li>
+        <li>Iniciar el desarrollo del backend ligero en Node.js/Fastify con la plantilla de recetas PDFKit.</li>
+      </ol>
+    </section>
+
+  </main>
+
+  <script>
+    // Initialize Mermaid
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      securityLevel: 'loose',
+      flowchart: { useMaxWidth: true, htmlLabels: true }
+    });
+
+    // Initialize Highlight.js
+    hljs.highlightAll();
+
+    // Dark/Light Theme Toggle Handler
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    const htmlEl = document.documentElement;
+
+    themeBtn.addEventListener('click', () => {
+      if (htmlEl.classList.contains('dark')) {
+        htmlEl.classList.remove('dark');
+        htmlEl.classList.add('light');
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Modo Oscuro';
+      } else {
+        htmlEl.classList.remove('light');
+        htmlEl.classList.add('dark');
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Modo Claro';
+      }
+    });
+
+    // Highlight current active sidebar link on scroll
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-item a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= (sectionTop - 120)) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
