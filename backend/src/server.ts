@@ -1,10 +1,50 @@
 import Fastify from 'fastify';
+import cors from '@fastify/cors';
+import { PostgresPatientRepository } from './infrastructure/supabase/PostgresPatientRepository.js';
+import { PostgresMedicalHistoryRepository } from './infrastructure/supabase/PostgresMedicalHistoryRepository.js';
+import { PostgresCIE10Repository } from './infrastructure/supabase/PostgresCIE10Repository.js';
+import { SupabaseAuthService } from './infrastructure/supabase/SupabaseAuthService.js';
+import { PdfKitService } from './infrastructure/pdf/PdfKitService.js';
+import { SupabaseStorageService } from './infrastructure/storage/SupabaseStorageService.js';
+import { AuthenticateUser } from './application/use-cases/AuthenticateUser.js';
+import { SearchCIE10 } from './application/use-cases/SearchCIE10.js';
+import { RegisterConsultation } from './application/use-cases/RegisterConsultation.js';
+import { authRoutes } from './interfaces/routes/authRoutes.js';
+import { patientRoutes } from './interfaces/routes/patientRoutes.js';
+import { consultationRoutes } from './interfaces/routes/consultationRoutes.js';
+import { cie10Routes } from './interfaces/routes/cie10Routes.js';
 
 const server = Fastify({
   logger: {
     level: 'info',
   },
 });
+
+await server.register(cors, {
+  origin: true,
+  credentials: true,
+});
+
+const patientRepository = new PostgresPatientRepository();
+const historyRepository = new PostgresMedicalHistoryRepository();
+const authService = new SupabaseAuthService();
+const pdfService = new PdfKitService();
+const storageService = new SupabaseStorageService();
+
+const authenticateUser = new AuthenticateUser(authService);
+const cie10Repository = new PostgresCIE10Repository();
+const searchCIE10 = new SearchCIE10(cie10Repository);
+const registerConsultation = new RegisterConsultation(
+  patientRepository,
+  historyRepository,
+  pdfService,
+  storageService,
+);
+
+authRoutes(server, authenticateUser);
+patientRoutes(server, patientRepository);
+consultationRoutes(server, registerConsultation);
+cie10Routes(server, searchCIE10);
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const host = process.env.HOST || '0.0.0.0';
