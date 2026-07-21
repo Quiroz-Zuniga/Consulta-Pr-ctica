@@ -1,5 +1,7 @@
+import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import { supabaseAdmin } from './infrastructure/supabase/SupabaseClient.js';
 import { PostgresPatientRepository } from './infrastructure/supabase/PostgresPatientRepository.js';
 import { PostgresMedicalHistoryRepository } from './infrastructure/supabase/PostgresMedicalHistoryRepository.js';
 import { PostgresCIE10Repository } from './infrastructure/supabase/PostgresCIE10Repository.js';
@@ -45,6 +47,18 @@ authRoutes(server, authenticateUser);
 patientRoutes(server, patientRepository);
 consultationRoutes(server, registerConsultation);
 cie10Routes(server, searchCIE10);
+
+server.get('/health', async (request, reply) => {
+  try {
+    const { data, error } = await supabaseAdmin.from('users').select('count', { count: 'exact', head: true });
+    if (error) {
+      return reply.status(500).send({ status: 'error', supabaseConnected: false, error: error.message });
+    }
+    return reply.send({ status: 'ok', supabaseConnected: true, userCount: data });
+  } catch (err: any) {
+    return reply.status(500).send({ status: 'error', supabaseConnected: false, error: err.message });
+  }
+});
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const host = process.env.HOST || '0.0.0.0';
