@@ -1,0 +1,6 @@
+IdPaciente,Nombre,ApellidoPaterno,ApellidoMaterno,FechaNacimiento,Sexo,Telefono,FotoUrl,EsProtegido
+1,Maria,Garcia,Lopez,15/03/1985,F,555-1234,,0
+2,Jose,Hernandez,Rodriguez,22/07/1970,M,555-5678,,0
+3,Ana,Martinez,Sanchez,10/11/1990,F,555-9012,,1
+4,Carlos,Ruiz,Diaz,05/01/1960,M,555-3456,,0
+5,Laura,Flores,Gomez,18/06/1995,F,555-7890,,0

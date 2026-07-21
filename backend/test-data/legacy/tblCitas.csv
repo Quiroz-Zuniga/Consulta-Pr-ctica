@@ -1,0 +1,6 @@
+IdCita,IdPaciente,FechaCita,Motivo,Estado
+1,1,25/01/2024,Control post quirúrgico,completed
+2,2,20/03/2024,Seguimiento hipertensión,completed
+3,3,01/06/2024,Consulta de rutina,scheduled
+4,5,22/03/2024,Consulta por gripe,completed
+5,4,30/03/2024,Seguimiento artritis,cancelled

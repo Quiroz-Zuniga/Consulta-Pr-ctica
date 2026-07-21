@@ -1,0 +1,8 @@
+IdConsulta,IdPaciente,IdDoctor,FechaConsulta,NotasClinicas,Diagnostico
+1,1,1,15/01/2024,Paciente presenta dolor abdominal bajo. Diagnóstico: apendicitis aguda.,K35.8
+2,2,1,20/02/2024,Tensión arterial elevada en consultation. Hipertensión arterial.,I10
+3,3,2,01/03/2024,Consulta de rutina. Paciente sana.,Z00.0
+4,4,1,10/03/2024,Dolor en rodilla derecha. Artritis.,M17.1
+5,5,2,15/03/2024,Gripe común. Fiebre y congestión.,J11.0
+6,1,1,20/04/2024,Control post quirúrgico. Evolución favorable.,Z09.0
+7,2,1,01/05/2024,Seguimiento hipertensión. Presión controlada.,I10

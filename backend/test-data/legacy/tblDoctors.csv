@@ -1,0 +1,3 @@
+IdDoctor,Nombre,ApellidoPaterno,ApellidoMaterno,Email,Rol
+1,Roberto,Jimenez,Vargas,dr.jimenez@clinica.com,DOCTOR
+2,Sofia,Torres,Mendez,admin@clinica.com,ADMINISTRATOR

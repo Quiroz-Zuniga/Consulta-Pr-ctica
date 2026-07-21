@@ -1,0 +1,6 @@
+IdMedicamento,IdReceta,NombreMedicamento,Dosis,Frecuencia,DuracionDias
+1,1,Amoxicilina,500mg,Cada 8 horas,10
+2,1,Paracetamol,650mg,Cada 6 horas si dolor,5
+3,2,Lisinopril,10mg,Una vez al día,30
+4,4,Ibuprofeno,400mg,Cada 8 horas,7
+5,5,Paracetamol,500mg,Cada 6 horas,3

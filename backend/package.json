@@ -9,13 +9,16 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/tests/use-cases.test.ts"
+    "test": "tsx --test src/tests/use-cases.test.ts",
+    "etl": "tsx src/interfaces/etl/index.ts",
+    "etl:dry": "tsx src/interfaces/etl/index.ts --dry-run"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
     "@supabase/supabase-js": "^2.110.8",
     "dotenv": "^17.4.2",
     "fastify": "^4.28.0",
+    "node-adodb": "^5.0.3",
     "pdfkit": "^0.15.0",
     "zod": "^3.23.0"
   },
