@@ -1,0 +1,60 @@
+{
+  "startedAt": "2026-07-21T19:43:19.435Z",
+  "finishedAt": "2026-07-21T19:43:19.472Z",
+  "mdbPath": "C:\\Users\\Sarahi\\Documents\\examen\\Consulta-Pr-ctica\\backend\\test-data\\legacy",
+  "mdbHash": "",
+  "tables": [
+    {
+      "tableName": "patients",
+      "rowsExtracted": 5,
+      "rowsTransformed": 5,
+      "rowsLoaded": 5,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "tableName": "users",
+      "rowsExtracted": 2,
+      "rowsTransformed": 2,
+      "rowsLoaded": 2,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "tableName": "medical_histories",
+      "rowsExtracted": 7,
+      "rowsTransformed": 7,
+      "rowsLoaded": 7,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "tableName": "prescriptions",
+      "rowsExtracted": 5,
+      "rowsTransformed": 5,
+      "rowsLoaded": 5,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "tableName": "prescription_items",
+      "rowsExtracted": 5,
+      "rowsTransformed": 5,
+      "rowsLoaded": 5,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "tableName": "appointments",
+      "rowsExtracted": 5,
+      "rowsTransformed": 5,
+      "rowsLoaded": 5,
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "totalExtracted": 29,
+  "totalLoaded": 29,
+  "totalErrors": 0,
+  "totalWarnings": 0
+}

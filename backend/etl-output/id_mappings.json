@@ -1,0 +1,90 @@
+{
+  "patients": [
+    {
+      "legacyId": 1,
+      "newUuid": "20990f88-d1af-4f62-8320-d590184d7620",
+      "tableName": "patients"
+    },
+    {
+      "legacyId": 2,
+      "newUuid": "7e0e39bf-21c7-4d96-804c-9de31e972d0a",
+      "tableName": "patients"
+    },
+    {
+      "legacyId": 3,
+      "newUuid": "8d50c767-df37-4994-9408-ae6fe76a405d",
+      "tableName": "patients"
+    },
+    {
+      "legacyId": 4,
+      "newUuid": "aceeab68-0cb2-4f63-8962-8867ceeda4ae",
+      "tableName": "patients"
+    },
+    {
+      "legacyId": 5,
+      "newUuid": "60f2f816-5cfe-45e4-9c33-2bb34efb5a98",
+      "tableName": "patients"
+    }
+  ],
+  "users": [
+    {
+      "legacyId": 1,
+      "newUuid": "a2462ba2-441e-401e-9579-d2ca628cbfa9",
+      "tableName": "users"
+    },
+    {
+      "legacyId": 2,
+      "newUuid": "62a116ba-3fe8-4c69-acff-0dfca889decd",
+      "tableName": "users"
+    }
+  ],
+  "medical_histories": [
+    {
+      "legacyId": 1,
+      "newUuid": "41f026cb-4c96-41cd-ac17-821159fee976",
+      "tableName": "medical_histories"
+    },
+    {
+      "legacyId": 2,
+      "newUuid": "9d1aa060-0301-4e24-bb06-1642b2d129e8",
+      "tableName": "medical_histories"
+    },
+    {
+      "legacyId": 3,
+      "newUuid": "79e6a4a8-fd30-4b41-b2c9-b262a7477969",
+      "tableName": "medical_histories"
+    },
+    {
+      "legacyId": 4,
+      "newUuid": "d19c2286-b0d8-4e1f-a42a-20603c814af5",
+      "tableName": "medical_histories"
+    },
+    {
+      "legacyId": 5,
+      "newUuid": "a1ba2ca1-9dca-46d3-86ec-c6788082d89b",
+      "tableName": "medical_histories"
+    }
+  ],
+  "prescriptions": [
+    {
+      "legacyId": 1,
+      "newUuid": "d44cdf1d-735b-43a4-a1a5-5f3bf094455f",
+      "tableName": "prescriptions"
+    },
+    {
+      "legacyId": 2,
+      "newUuid": "04319d6d-713e-4474-9c0a-9772474d37fe",
+      "tableName": "prescriptions"
+    },
+    {
+      "legacyId": 4,
+      "newUuid": "775ffa0b-b1fc-48a2-a348-f9121acba884",
+      "tableName": "prescriptions"
+    },
+    {
+      "legacyId": 5,
+      "newUuid": "d994807f-7468-4a30-a784-99adca1236ce",
+      "tableName": "prescriptions"
+    }
+  ]
+}
