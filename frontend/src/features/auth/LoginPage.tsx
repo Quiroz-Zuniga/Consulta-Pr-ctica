@@ -107,7 +107,7 @@ export function LoginPage() {
           {/* Security Banner */}
           <div className="mt-6 flex items-center justify-center gap-2 rounded-xl border border-slate-800/80 bg-slate-900/50 py-2.5 px-3 text-[11px] font-medium text-slate-400">
             <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0" />
-            <span>Acceso Seguro con Encriptación TLS 1.3 & RLS</span>
+            <span>Conexión segura. Todos los datos están protegidos.</span>
           </div>
         </div>
 

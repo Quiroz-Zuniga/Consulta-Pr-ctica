@@ -22,7 +22,7 @@ interface NewAppointmentModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
-  doctorsList: Array<{ id: string; name: string }>
+  doctorsList?: Array<{ id: string; name: string }>
   initialDate?: string
 }
 
@@ -44,6 +44,24 @@ export function NewAppointmentModal({
   const [reason, setReason] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Fetch doctors list directly in case the parent prop is empty due to RLS
+  const { data: fetchedDoctors = [] } = useQuery({
+    queryKey: ['doctors-list-modal'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, full_name')
+        .in('role', ['DOCTOR', 'ADMINISTRATOR'])
+        .eq('is_active', true)
+      if (error) {
+        console.warn('Error fetching doctors from users table:', error)
+        return []
+      }
+      return (data || []).map((d: any) => ({ id: d.id, name: d.full_name || 'Médico' }))
+    },
+  })
+  const doctors = doctorsList && doctorsList.length > 0 ? doctorsList : fetchedDoctors
 
   // Live patient search query
   const { data: patients } = useQuery({
@@ -179,13 +197,13 @@ export function NewAppointmentModal({
               onChange={(e) => {
                 const docId = e.target.value
                 setSelectedDoctorId(docId)
-                const doc = doctorsList.find((d) => d.id === docId)
+                const doc = doctors.find((d) => d.id === docId)
                 setSelectedDoctorName(doc ? doc.name : '')
               }}
               leftIcon={<User className="h-4 w-4 text-slate-400" />}
             >
               <option value="">Seleccionar Médico...</option>
-              {doctorsList.map((d) => (
+              {doctors.map((d) => (
                 <option key={d.id} value={d.id}>
                   Dr. {d.name}
                 </option>

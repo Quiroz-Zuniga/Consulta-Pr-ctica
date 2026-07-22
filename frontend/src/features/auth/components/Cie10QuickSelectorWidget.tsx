@@ -94,7 +94,7 @@ export function Cie10QuickSelectorWidget({ canConsult }: { canConsult: boolean }
                 Guía & Catálogo CIE-10
               </CardTitle>
               <p className="text-[11px] text-slate-500">
-                Datos en tiempo real desde Supabase · Catálogo {allDiagnoses.length > 0 ? `${allDiagnoses.length} diagnósticos` : '—'}
+                Catálogo oficial de diagnósticos estandarizados · {allDiagnoses.length > 0 ? `${allDiagnoses.length} diagnósticos` : '—'}
               </p>
             </div>
           </div>
@@ -108,14 +108,14 @@ export function Cie10QuickSelectorWidget({ canConsult }: { canConsult: boolean }
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-8 text-slate-400 gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-            <p className="text-xs font-medium">Cargando catálogo CIE-10 desde Supabase...</p>
+            <p className="text-xs font-medium">Cargando catálogo CIE-10...</p>
           </div>
         ) : allDiagnoses.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-slate-400 gap-2 text-center">
             <BookOpen className="h-8 w-8 text-slate-300" />
             <p className="text-xs font-semibold text-slate-600">Catálogo CIE-10 no disponible</p>
             <p className="text-[11px] text-slate-400">
-              La tabla <code className="font-mono">cie10_diagnoses</code> aún no contiene datos o no es accesible.
+              El catálogo CIE-10 aún no está disponible. Contacta al administrador del sistema.
             </p>
           </div>
         ) : (

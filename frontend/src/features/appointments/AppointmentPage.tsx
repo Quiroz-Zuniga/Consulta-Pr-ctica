@@ -213,7 +213,7 @@ export function AppointmentPage() {
                   Agenda de Consultas
                 </h2>
                 <Badge variant="success" dot size="md" className="animate-pulse">
-                  Realtime Live
+                  En Vivo
                 </Badge>
               </div>
               <p className="mt-0.5 text-xs text-slate-500">

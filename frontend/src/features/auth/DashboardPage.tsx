@@ -101,7 +101,7 @@ export function DashboardPage() {
             description="Calendario interactivo y cola de atención diaria en tiempo real."
             link="/appointments"
             icon={Calendar}
-            badgeText="Realtime Live"
+            badgeText="Tiempo Real"
             accentColor="amber"
           />
 
@@ -139,7 +139,7 @@ export function DashboardPage() {
             <div>
               <h4 className="text-xs font-bold text-slate-900 uppercase">Inmutabilidad Legal</h4>
               <p className="mt-1 text-xs text-slate-600 leading-relaxed">
-                Las notas clínicas guardadas quedan bloqueadas (<code className="font-mono text-[10px]">is_locked = TRUE</code>) garantizando cumplimiento normativo.
+                Las notas clínicas guardadas quedan bloqueadas automáticamente, garantizando cumplimiento normativo.
               </p>
             </div>
           </CardContent>
@@ -165,7 +165,7 @@ export function DashboardPage() {
               <Activity className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-900 uppercase">Supabase Realtime</h4>
+              <h4 className="text-xs font-bold text-slate-900 uppercase">Actualización en Tiempo Real</h4>
               <p className="mt-1 text-xs text-slate-600 leading-relaxed">
                 Actualizaciones inmediatas de la agenda entre recepción y consultorio sin recargar.
               </p>

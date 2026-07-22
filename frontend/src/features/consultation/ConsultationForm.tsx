@@ -192,7 +192,7 @@ export function ConsultationForm() {
       return await res.json()
     },
     onSuccess: (data) => {
-      success('Consulta registrada con éxito', 'La nota médica e inmutabilidad han sido aplicadas.')
+      success('Consulta registrada con éxito', 'La nota médica ha sido guardada de forma segura.')
       if (data.pdfUrl) setPdfUrl(data.pdfUrl)
       else navigate('/patients')
     },

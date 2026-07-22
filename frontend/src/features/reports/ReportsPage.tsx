@@ -357,14 +357,14 @@ export function ReportsPage() {
           <div className="flex flex-wrap gap-4 items-end">
             <div className="flex flex-col gap-1 min-w-64">
               <label className="text-xs font-medium text-slate-600" htmlFor="patient-id-input">
-                <Search className="inline h-3.5 w-3.5 mr-1" />UUID del Paciente
+                <Search className="inline h-3.5 w-3.5 mr-1" />ID del Paciente
               </label>
               <input
                 id="patient-id-input"
                 type="text"
                 value={patientId}
                 onChange={(e) => setPatientId(e.target.value)}
-                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                placeholder="Ingrese el ID del paciente"
                 className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-mono focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none"
               />
             </div>
