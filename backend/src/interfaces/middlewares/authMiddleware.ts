@@ -1,11 +1,12 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import { supabaseAdmin } from '../../infrastructure/supabase/SupabaseClient.js';
+import { supabaseAdmin, createScopedClient } from '../../infrastructure/supabase/SupabaseClient.js';
 
 export interface AuthenticatedUser {
   id: string;
   email: string;
   role: 'ADMINISTRATOR' | 'DOCTOR' | 'RECEPTIONIST';
   fullName: string;
+  token: string;
 }
 
 declare module 'fastify' {
@@ -33,13 +34,16 @@ export async function authMiddleware(
     return;
   }
 
-  const { data: userData, error: userError } = await supabaseAdmin
+  const userClient = createScopedClient(token);
+
+  const { data: userData, error: userError } = await userClient
     .from('users')
     .select('id, email, role, full_name, is_active')
     .eq('id', authUser.id)
     .single();
 
   if (userError || !userData) {
+    console.error('[authMiddleware] Error al cargar perfil:', userError);
     reply.status(401).send({ error: 'Usuario no encontrado en el sistema' });
     return;
   }
@@ -54,5 +58,6 @@ export async function authMiddleware(
     email: userData.email as string,
     role: userData.role as AuthenticatedUser['role'],
     fullName: userData.full_name as string,
+    token,
   };
 }

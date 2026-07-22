@@ -30,7 +30,7 @@ export class PdfKitService implements IPdfGeneratorService {
       doc.text(`Paciente: `, { continued: true });
       doc.font('Helvetica').text(`${patient.fullName}`);
       doc.font('Helvetica-Bold').text(`Edad: `, { continued: true });
-      doc.font('Helvetica').text(`${this.calculateAge(patient.birthDate)} años`);
+      doc.font('Helvetica').text(`${this.calculateAge(patient.birthDate)}${patient.birthDate ? ' años' : ''}`);
       doc.moveDown(0.3);
 
       doc.font('Helvetica-Bold').text(`Médico: `, { continued: true });
@@ -47,61 +47,46 @@ export class PdfKitService implements IPdfGeneratorService {
       doc.moveDown(0.5);
 
       doc.moveTo(50, doc.y).lineTo(50 + pageWidth, doc.y).stroke();
+      doc.moveDown(0.8);
+
+      // --- 3. PRESCRIPCIÓN & MEDICAMENTOS ---
+      doc.fontSize(12).font('Helvetica-Bold').fillColor('#0f766e');
+      doc.text('PRESCRIPCIÓN MÉDICA', { align: 'left' });
       doc.moveDown(0.5);
 
-      doc.fontSize(13).font('Helvetica-Bold').text('Medicamentos Recetados');
-      doc.moveDown(0.3);
+      doc.fillColor('#000000').fontSize(10);
 
       prescription.medications.forEach((med, index) => {
-        const yStart = doc.y;
-        doc.rect(50, yStart, pageWidth, 60).stroke();
-
-        const contentX = 60;
-        const contentY = yStart + 5;
-        doc.fontSize(10).font('Helvetica-Bold');
-        doc.text(`${index + 1}. ${med.name}`, contentX, contentY, {
-          width: pageWidth - 20,
-        });
-
-        doc.font('Helvetica');
-        doc.text(`Dosis: ${med.dosage}`, contentX + 10, contentY + 15, {
-          width: pageWidth - 30,
-        });
-        doc.text(`Frecuencia: ${med.frequency}`, contentX + 10, contentY + 28, {
-          width: pageWidth - 30,
-        });
-        doc.text(`Duración: ${med.durationDays} días`, contentX + 10, contentY + 41, {
-          width: pageWidth - 30,
-        });
-
-        doc.y = yStart + 65;
+        doc.font('Helvetica-Bold').text(`${index + 1}. ${med.name}`, { continued: true });
+        doc.font('Helvetica').text(` — Dosis: ${med.dosage} | Frecuencia: ${med.frequency} | Duración: ${med.durationDays} días`);
+        doc.moveDown(0.3);
       });
 
       if (prescription.customIndications) {
         doc.moveDown(0.5);
-        doc.moveTo(50, doc.y).lineTo(50 + pageWidth, doc.y).stroke();
-        doc.moveDown(0.3);
-        doc.fontSize(11).font('Helvetica-Bold').text('Indicaciones Adicionales:');
+        doc.font('Helvetica-Bold').text('Indicaciones Especiales:');
         doc.font('Helvetica').text(prescription.customIndications);
       }
 
       if (prescription.nextAppointment) {
         doc.moveDown(0.5);
-        doc.font('Helvetica-Bold').text('Próxima Cita: ', { continued: true });
-        doc.font('Helvetica').text(
-          prescription.nextAppointment.toLocaleDateString('es-MX', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          }),
-        );
+        const nextApptStr = new Date(prescription.nextAppointment).toLocaleDateString('es-MX', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        });
+        doc.font('Helvetica-Bold').text(`Próxima Cita Recomendada: `, { continued: true });
+        doc.font('Helvetica').text(nextApptStr);
       }
 
-      doc.moveDown(1);
-      doc.moveTo(50, doc.y).lineTo(50 + pageWidth, doc.y).stroke();
-      doc.moveDown(0.5);
-      doc.fontSize(9).font('Helvetica').text(
-        'Documento generado electrónicamente por Consulta Práctica Web.',
+      // --- 4. FIRMA Y PIE DE PÁGINA ---
+      doc.moveDown(2);
+      doc.moveTo(200, doc.y).lineTo(395, doc.y).stroke();
+      doc.font('Helvetica').fontSize(9).text('Firma y Sello del Médico Tratante', { align: 'center' });
+
+      doc.moveDown(1.5);
+      doc.fontSize(8).fillColor('#64748b').text(
+        'Documento generado electrónicamente por Consulta Práctica Web. Validez legal sanitaria.',
         { align: 'center' },
       );
 
@@ -109,13 +94,15 @@ export class PdfKitService implements IPdfGeneratorService {
     });
   }
 
-  private calculateAge(birthDate: Date): number {
+  private calculateAge(birthDate?: Date): string {
+    if (!birthDate) return 'N/E';
     const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
       age--;
     }
-    return age;
+    return `${age}`;
   }
 }

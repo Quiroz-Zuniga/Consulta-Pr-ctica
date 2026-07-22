@@ -14,12 +14,15 @@ export function patientRoutes(
   app.get('/api/v1/patients', {
     preHandler: [roleGuard('ADMINISTRATOR', 'DOCTOR', 'RECEPTIONIST')],
   }, async (request, reply) => {
-    const query = (request.query as { q?: string }).q;
+    const { q, page, limit } = request.query as { q?: string; page?: string; limit?: string };
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 20;
+
     let patients;
-    if (query) {
-      patients = await patientRepository.search(query);
+    if (q) {
+      patients = await patientRepository.search(q, { page: pageNum, limit: limitNum }, request.user?.token);
     } else {
-      patients = await patientRepository.findAll();
+      patients = await patientRepository.findAll({ page: pageNum, limit: limitNum }, request.user?.token);
     }
     reply.status(200).send(patients);
   });
@@ -28,7 +31,7 @@ export function patientRoutes(
     preHandler: [roleGuard('ADMINISTRATOR', 'DOCTOR', 'RECEPTIONIST')],
   }, async (request, reply) => {
     const { id } = request.params as { id: string };
-    const patient = await patientRepository.findById(id);
+    const patient = await patientRepository.findById(id, request.user?.token);
     if (!patient) {
       reply.status(404).send({ error: 'Paciente no encontrado' });
       return;
@@ -52,7 +55,7 @@ export function patientRoutes(
     };
 
     try {
-      await patientRepository.save(patient);
+      await patientRepository.save(patient, request.user?.token);
       reply.status(201).send(patient);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error interno';
@@ -70,7 +73,7 @@ export function patientRoutes(
       return;
     }
 
-    const existing = await patientRepository.findById(id);
+    const existing = await patientRepository.findById(id, request.user?.token);
     if (!existing) {
       reply.status(404).send({ error: 'Paciente no encontrado' });
       return;
@@ -78,7 +81,7 @@ export function patientRoutes(
 
     const updated = { ...existing, ...parsed.data };
     try {
-      await patientRepository.update(updated);
+      await patientRepository.update(updated, request.user?.token);
       reply.status(200).send(updated);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error interno';

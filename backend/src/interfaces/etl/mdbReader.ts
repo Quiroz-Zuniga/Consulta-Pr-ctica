@@ -9,7 +9,7 @@ export interface MdbReader {
 }
 
 export function createMdbReader(mdbPath: string): MdbReader {
-  let ADODB: typeof import('node-adodb');
+  let ADODB: any;
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     ADODB = require('node-adodb');

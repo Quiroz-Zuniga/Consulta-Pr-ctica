@@ -11,3 +11,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey);
 
 export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
+
+export function createScopedClient(token?: string) {
+  if (!token) return supabaseAdmin;
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
+}

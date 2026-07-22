@@ -2,10 +2,14 @@ import { z } from 'zod';
 import type { Patient } from '../../domain/entities/Patient.js';
 
 export const CreatePatientSchema = z.object({
-  fullName: z.string().min(1).max(255),
-  birthDate: z.coerce.date(),
-  gender: z.string().min(1).max(20),
-  phone: z.string().max(50).optional().default(''),
+  fullName: z.string().min(1, 'El nombre completo es obligatorio').max(255),
+  birthDate: z.coerce.date().optional(),
+  gender: z.string().max(20).optional().default('Sin especificar'),
+  phone: z
+    .string()
+    .optional()
+    .default('')
+    .transform((val) => (val ? val.replace(/\s+/g, '') : '')),
   photoUrl: z.string().optional().default(''),
   isProtected: z.boolean().optional().default(false),
 });

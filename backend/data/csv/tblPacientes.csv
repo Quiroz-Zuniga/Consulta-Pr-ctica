@@ -1,0 +1,3 @@
+IdPaciente,Nombre,ApellidoPaterno,ApellidoMaterno,FechaNacimiento,Sexo,Telefono,FotoUrl,EsProtegido
+1,Juan,Perez,Gomez,1980-05-15,M,555-1234,foto1.jpg,0
+2,Maria,Lopez,Garcia,1990-10-20,F,555-5678,foto2.jpg,1

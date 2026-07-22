@@ -1,0 +1,3 @@
+IdDoctor,Nombre,ApellidoPaterno,ApellidoMaterno,Email,Rol
+1,Mario,Rossi,Bianchi,mario@example.com,DOCTOR
+2,Anna,Verdi,Neri,anna@example.com,ADMINISTRATOR

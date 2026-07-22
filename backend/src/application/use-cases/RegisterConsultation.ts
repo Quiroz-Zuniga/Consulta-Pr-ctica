@@ -20,8 +20,9 @@ export class RegisterConsultation {
     dto: CreateConsultationDTO,
     doctorId: string,
     doctorName: string,
+    token?: string,
   ): Promise<ConsultationResponseDTO> {
-    const patient = await this._patientRepository.findById(dto.patientId);
+    const patient = await this._patientRepository.findById(dto.patientId, token);
     if (!patient) {
       throw new Error('Patient not found');
     }
@@ -51,7 +52,7 @@ export class RegisterConsultation {
 
     history = lockHistory(history);
 
-    await this._historyRepository.save(history);
+    await this._historyRepository.save(history, token);
 
     const pdfBuffer = await this._pdfService.generatePrescriptionPdf(
       prescription,
@@ -60,7 +61,7 @@ export class RegisterConsultation {
     );
 
     const fileName = `prescription_${prescriptionId}.pdf`;
-    const pdfUrl = await this._storageService.uploadPdf(pdfBuffer, fileName);
+    const pdfUrl = await this._storageService.uploadPdf(pdfBuffer, fileName, token);
 
     return { historyId, pdfUrl };
   }

@@ -11,7 +11,7 @@ export function cie10Routes(
   app.addHook('onRequest', authMiddleware);
 
   app.get('/api/v1/cie10/search', {
-    preHandler: [roleGuard('DOCTOR')],
+    preHandler: [roleGuard('ADMINISTRATOR', 'DOCTOR')],
   }, async (request, reply) => {
     const parsed = SearchCIE10Schema.safeParse(request.query);
     if (!parsed.success) {
@@ -20,7 +20,7 @@ export function cie10Routes(
     }
 
     try {
-      const results = await searchCIE10.execute(parsed.data.q);
+      const results = await searchCIE10.execute(parsed.data.q, request.user?.token);
       reply.status(200).send(results);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error interno';

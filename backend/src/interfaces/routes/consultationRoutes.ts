@@ -24,6 +24,7 @@ export function consultationRoutes(
         parsed.data,
         request.user!.id,
         request.user!.fullName,
+        request.user!.token,
       );
       reply.status(201).send(result);
     } catch (error) {

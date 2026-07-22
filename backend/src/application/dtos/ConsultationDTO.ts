@@ -11,7 +11,7 @@ export const CreateConsultationSchema = z.object({
   patientId: z.string().uuid(),
   cie10Code: z.string().min(1).max(10),
   clinicalNote: z.string().min(1),
-  medications: z.array(MedicationSchema).min(1),
+  medications: z.array(MedicationSchema).optional().default([]),
   customIndications: z.string().optional().default(''),
   nextAppointment: z.coerce.date().optional().nullable().default(null),
 });

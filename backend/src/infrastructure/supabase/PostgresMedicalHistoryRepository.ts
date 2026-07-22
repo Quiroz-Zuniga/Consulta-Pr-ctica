@@ -2,11 +2,12 @@ import type { MedicalHistory } from '../../domain/entities/MedicalHistory.js';
 import type { Prescription } from '../../domain/entities/Prescription.js';
 import type { Medication } from '../../domain/entities/Medication.js';
 import type { IMedicalHistoryRepository } from '../../domain/ports/IMedicalHistoryRepository.js';
-import { supabaseAdmin } from './SupabaseClient.js';
+import { createScopedClient } from './SupabaseClient.js';
 
 export class PostgresMedicalHistoryRepository implements IMedicalHistoryRepository {
-  async findById(id: string): Promise<MedicalHistory | null> {
-    const { data, error } = await supabaseAdmin
+  async findById(id: string, token?: string): Promise<MedicalHistory | null> {
+    const client = createScopedClient(token);
+    const { data, error } = await client
       .from('medical_histories')
       .select(`
         *,
@@ -22,8 +23,9 @@ export class PostgresMedicalHistoryRepository implements IMedicalHistoryReposito
     return this.mapToEntity(data);
   }
 
-  async findByPatient(patientId: string): Promise<MedicalHistory[]> {
-    const { data, error } = await supabaseAdmin
+  async findByPatient(patientId: string, token?: string): Promise<MedicalHistory[]> {
+    const client = createScopedClient(token);
+    const { data, error } = await client
       .from('medical_histories')
       .select(`
         *,
@@ -39,8 +41,9 @@ export class PostgresMedicalHistoryRepository implements IMedicalHistoryReposito
     return data.map(this.mapToEntity);
   }
 
-  async save(history: MedicalHistory): Promise<void> {
-    const { error: historyError } = await supabaseAdmin
+  async save(history: MedicalHistory, token?: string): Promise<void> {
+    const client = createScopedClient(token);
+    const { error: historyError } = await client
       .from('medical_histories')
       .insert({
         id: history.id,
@@ -56,7 +59,7 @@ export class PostgresMedicalHistoryRepository implements IMedicalHistoryReposito
     }
 
     if (history.prescription) {
-      const { error: prescriptionError } = await supabaseAdmin
+      const { error: prescriptionError } = await client
         .from('prescriptions')
         .insert({
           id: history.prescription.id,
@@ -78,7 +81,7 @@ export class PostgresMedicalHistoryRepository implements IMedicalHistoryReposito
           duration_days: med.durationDays,
         }));
 
-        const { error: itemsError } = await supabaseAdmin
+        const { error: itemsError } = await client
           .from('prescription_items')
           .insert(items);
 
