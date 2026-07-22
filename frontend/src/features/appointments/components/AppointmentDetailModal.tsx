@@ -46,7 +46,13 @@ export function AppointmentDetailModal({
   const [loadingReschedule, setLoadingReschedule] = useState(false)
   const [sendingReminder, setSendingReminder] = useState(false)
   const [loadingVideo, setLoadingVideo] = useState(false)
+<<<<<<< HEAD
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
+=======
+  const [videoUrl, setVideoUrl] = useState<string | null>(appointment?.video_room_url || null)
+
+  // Payment State
+>>>>>>> 2af189efb6574de0cf90e9b2f8a94821e9306a1a
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
   const [payAmount, setPayAmount] = useState('500')
   const [payMethod, setPayMethod] = useState<'cash' | 'bank_transfer' | 'card_manual' | 'other'>('cash')
@@ -120,8 +126,38 @@ export function AppointmentDetailModal({
     }
   }
 
+<<<<<<< HEAD
   const handleStartVideoConsultation = () => {
     window.open(`/video-simulation/${appointment.id}`, 'VideoConsulta', 'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no')
+=======
+  const handleStartVideoConsultation = async () => {
+    setLoadingVideo(true)
+    try {
+      const session = (await supabase.auth.getSession()).data.session
+      const token = session?.access_token
+
+      const response = await fetch(`/api/v1/appointments/${appointment.id}/video-consultation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      })
+
+      const data = await response.json()
+      if (!response.ok || !data.roomUrl) {
+        throw new Error(data.error || 'Error al iniciar la videoconsulta.')
+      }
+
+      setVideoUrl(data.roomUrl)
+      window.open(data.roomUrl, '_blank', 'noopener,noreferrer')
+      success('Sala de Videoconsulta Iniciada', 'La videollamada de Jitsi Meet ha sido abierta en una pestaña segura.')
+    } catch (err: any) {
+      toastError('Fallo al iniciar videoconsulta', err.message || 'Ocurrió un error inesperado.')
+    } finally {
+      setLoadingVideo(false)
+    }
+>>>>>>> 2af189efb6574de0cf90e9b2f8a94821e9306a1a
   }
 
   const handleRegisterPayment = async (e: React.FormEvent) => {
