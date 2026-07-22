@@ -45,6 +45,16 @@ export function AppointmentDetailModal({
   const [newDate, setNewDate] = useState('')
   const [loadingReschedule, setLoadingReschedule] = useState(false)
   const [sendingReminder, setSendingReminder] = useState(false)
+  const [loadingVideo, setLoadingVideo] = useState(false)
+  const [videoUrl, setVideoUrl] = useState<string | null>(appointment?.video_room_url || null)
+
+  // Payment State
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
+  const [payAmount, setPayAmount] = useState('500')
+  const [payMethod, setPayMethod] = useState<'cash' | 'bank_transfer' | 'card_manual' | 'other'>('cash')
+  const [payStatus, setPayStatus] = useState<'paid' | 'pending' | 'partial' | 'refunded'>('paid')
+  const [payNotes, setPayNotes] = useState('')
+  const [loadingPayment, setLoadingPayment] = useState(false)
 
   const { success, error: toastError } = useToast()
 
@@ -105,17 +115,6 @@ export function AppointmentDetailModal({
       setSendingReminder(false)
     }
   }
-
-  const [loadingVideo, setLoadingVideo] = useState(false)
-  const [videoUrl, setVideoUrl] = useState<string | null>(appointment.video_room_url || null)
-
-  // Payment State
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
-  const [payAmount, setPayAmount] = useState('500')
-  const [payMethod, setPayMethod] = useState<'cash' | 'bank_transfer' | 'card_manual' | 'other'>('cash')
-  const [payStatus, setPayStatus] = useState<'paid' | 'pending' | 'partial' | 'refunded'>('paid')
-  const [payNotes, setPayNotes] = useState('')
-  const [loadingPayment, setLoadingPayment] = useState(false)
 
   const handleStartVideoConsultation = async () => {
     setLoadingVideo(true)
