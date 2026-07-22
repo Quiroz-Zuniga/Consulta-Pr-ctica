@@ -232,7 +232,7 @@ export class PostgresReportingRepository implements IReportingRepository {
   async getPatientVisitFrequency(dateRange: DateRange, limit = 20): Promise<PatientVisitFrequency[]> {
     const { data, error } = await supabaseAdmin
       .from('appointments')
-      .select('patient_id, patient_name, appointment_date')
+      .select('patient_id, patients(full_name), appointment_date')
       .gte('appointment_date', dateRange.from.toISOString())
       .lte('appointment_date', dateRange.to.toISOString())
       .eq('status', 'completed');
@@ -245,7 +245,7 @@ export class PostgresReportingRepository implements IReportingRepository {
       const existing = visitMap.get(r.patient_id);
       const aptDate = new Date(r.appointment_date as string);
       if (!existing) {
-        visitMap.set(r.patient_id, { patientName: r.patient_name ?? 'N/A', count: 1, lastVisit: aptDate });
+        visitMap.set(r.patient_id, { patientName: (r as any).patients?.full_name ?? 'N/A', count: 1, lastVisit: aptDate });
       } else {
         existing.count++;
         if (aptDate > existing.lastVisit) existing.lastVisit = aptDate;

@@ -1,10 +1,15 @@
 import type { IAuthService, AuthResult } from '../../domain/ports/IAuthService.js';
 import type { User } from '../../domain/entities/User.js';
+import { createClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from './SupabaseClient.js';
 
 export class SupabaseAuthService implements IAuthService {
   async signIn(email: string, password: string): Promise<AuthResult> {
-    const { data: authData, error: authError } = await supabaseAdmin.auth.signInWithPassword({
+    const tmpClient = createClient(
+      process.env.SUPABASE_URL ?? '',
+      process.env.SUPABASE_ANON_KEY ?? '',
+    );
+    const { data: authData, error: authError } = await tmpClient.auth.signInWithPassword({
       email,
       password,
     });

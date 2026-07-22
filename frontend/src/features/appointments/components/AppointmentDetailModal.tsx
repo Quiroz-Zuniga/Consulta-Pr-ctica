@@ -120,33 +120,8 @@ export function AppointmentDetailModal({
     }
   }
 
-  const handleStartVideoConsultation = async () => {
-    setLoadingVideo(true)
-    try {
-      const session = (await supabase.auth.getSession()).data.session
-      const token = session?.access_token
-
-      const response = await fetch(`/api/v1/appointments/${appointment.id}/video-consultation`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      })
-
-      const data = await response.json()
-      if (!response.ok || !data.roomUrl) {
-        throw new Error(data.error || 'Error al iniciar la videoconsulta.')
-      }
-
-      setVideoUrl(data.roomUrl)
-      window.open(data.roomUrl, '_blank', 'noopener,noreferrer')
-      success('Sala de Videoconsulta Iniciada', 'La videollamada de Jitsi Meet ha sido abierta en una pestaña segura.')
-    } catch (err: any) {
-      toastError('Fallo al iniciar videoconsulta', err.message || 'Ocurrió un error inesperado.')
-    } finally {
-      setLoadingVideo(false)
-    }
+  const handleStartVideoConsultation = () => {
+    window.open(`/video-simulation/${appointment.id}`, 'VideoConsulta', 'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no')
   }
 
   const handleRegisterPayment = async (e: React.FormEvent) => {
@@ -301,7 +276,7 @@ export function AppointmentDetailModal({
                   onClick={handleStartVideoConsultation}
                   className="bg-teal-600 hover:bg-teal-700 text-white font-bold"
                 >
-                  {videoUrl ? 'Unirse a Videoconsulta (Jitsi)' : 'Iniciar Videoconsulta'}
+                  'Iniciar Videoconsulta'
                 </Button>
               )}
 

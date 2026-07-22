@@ -26,10 +26,11 @@ export function documentRoutes(
   fastify: FastifyInstance,
   documentRepository: IMedicalDocumentRepository,
 ) {
-  fastify.addHook('onRequest', authMiddleware);
+  fastify.register(async function authenticated(scopedApp) {
+    scopedApp.addHook('onRequest', authMiddleware);
 
   // GET /api/v1/patients/:id/documents — Buscar/Listar documentos de paciente
-  fastify.get(
+  scopedApp.get(
     '/api/v1/patients/:id/documents',
     { preHandler: [roleGuard('ADMINISTRATOR', 'DOCTOR', 'RECEPTIONIST')] },
     async (request, reply) => {
@@ -57,7 +58,7 @@ export function documentRoutes(
   );
 
   // POST /api/v1/patients/:id/documents — Registrar nuevo documento
-  fastify.post(
+  scopedApp.post(
     '/api/v1/patients/:id/documents',
     { preHandler: [roleGuard('ADMINISTRATOR', 'DOCTOR', 'RECEPTIONIST')] },
     async (request, reply) => {
@@ -80,7 +81,7 @@ export function documentRoutes(
   );
 
   // PATCH /api/v1/documents/:id/status — Alternar estado activo/archivado
-  fastify.patch(
+  scopedApp.patch(
     '/api/v1/documents/:id/status',
     { preHandler: [roleGuard('ADMINISTRATOR', 'DOCTOR', 'RECEPTIONIST')] },
     async (request, reply) => {
@@ -95,7 +96,7 @@ export function documentRoutes(
   );
 
   // DELETE /api/v1/documents/:id — Eliminar documento
-  fastify.delete(
+  scopedApp.delete(
     '/api/v1/documents/:id',
     { preHandler: [roleGuard('ADMINISTRATOR', 'DOCTOR', 'RECEPTIONIST')] },
     async (request, reply) => {
@@ -106,4 +107,5 @@ export function documentRoutes(
       return reply.send({ success: true });
     },
   );
+  });
 }

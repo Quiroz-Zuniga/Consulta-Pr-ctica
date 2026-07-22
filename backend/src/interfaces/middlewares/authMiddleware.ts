@@ -1,5 +1,5 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import { supabaseAdmin, createScopedClient } from '../../infrastructure/supabase/SupabaseClient.js';
+import { supabaseAdmin } from '../../infrastructure/supabase/SupabaseClient.js';
 
 export interface AuthenticatedUser {
   id: string;
@@ -34,9 +34,7 @@ export async function authMiddleware(
     return;
   }
 
-  const userClient = createScopedClient(token);
-
-  const { data: userData, error: userError } = await userClient
+  const { data: userData, error: userError } = await supabaseAdmin
     .from('users')
     .select('id, email, role, full_name, is_active')
     .eq('id', authUser.id)

@@ -8,6 +8,7 @@ import { ConsultationForm } from './features/consultation/ConsultationForm'
 import { AppointmentPage } from './features/appointments/AppointmentPage'
 import { PublicIntakeFormPage } from './features/intake/PublicIntakeFormPage'
 import { PublicVideoCallPage } from './features/video/PublicVideoCallPage'
+import { VideoSimulationRoom } from './features/video/VideoSimulationRoom'
 import { ReportsPage } from './features/reports/ReportsPage'
 
 export default function App() {
@@ -38,6 +39,7 @@ export default function App() {
         }
       >
         <Route path="/appointments" element={<AppointmentPage />} />
+        <Route path="/video-simulation/:id" element={<VideoSimulationRoom />} />
       </Route>
 
       <Route

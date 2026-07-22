@@ -13,11 +13,12 @@ export function appointmentRoutes(
   fastify: FastifyInstance,
   sendAppointmentReminder: SendAppointmentReminder,
 ) {
-  fastify.addHook('onRequest', authMiddleware);
+  fastify.register(async function authenticated(scopedApp) {
+    scopedApp.addHook('onRequest', authMiddleware);
 
-  // POST /api/v1/appointments/:id/send-reminder — Disparo manual de recordatorio (Recepción, Médico, Admin)
-  fastify.post(
-    '/api/v1/appointments/:id/send-reminder',
+    // POST /api/v1/appointments/:id/send-reminder — Disparo manual de recordatorio (Recepción, Médico, Admin)
+    scopedApp.post(
+      '/api/v1/appointments/:id/send-reminder',
     { preHandler: [roleGuard('ADMINISTRATOR', 'DOCTOR', 'RECEPTIONIST')] },
     async (request, reply) => {
       const { id } = request.params as { id: string };
@@ -50,4 +51,5 @@ export function appointmentRoutes(
       }
     },
   );
+  });
 }

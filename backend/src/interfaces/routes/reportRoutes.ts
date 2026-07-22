@@ -31,13 +31,14 @@ export function reportRoutes(
   generateClinicReport: GenerateClinicReport,
   auditLogRepository: IAuditLogRepository,
 ): void {
-  app.addHook('onRequest', authMiddleware);
+  app.register(async function authenticated(scopedApp) {
+    scopedApp.addHook('onRequest', authMiddleware);
 
+    // ─────────────────────────────────────────────────────────────
+    // GET /api/v1/reports/clinic-stats?from=&to=
+    // Genera el reporte de actividad del consultorio en PDF
   // ─────────────────────────────────────────────────────────────
-  // GET /api/v1/reports/clinic-stats?from=&to=
-  // Genera el reporte de actividad del consultorio en PDF
-  // ─────────────────────────────────────────────────────────────
-  app.get('/api/v1/reports/clinic-stats', {
+  scopedApp.get('/api/v1/reports/clinic-stats', {
     preHandler: [roleGuard('ADMINISTRATOR')],
     config: {
       rateLimit: {
@@ -77,7 +78,7 @@ export function reportRoutes(
   // GET /api/v1/patients/:id/export/pdf
   // Exporta el expediente completo de un paciente en PDF
   // ─────────────────────────────────────────────────────────────
-  app.get('/api/v1/patients/:id/export/pdf', {
+  scopedApp.get('/api/v1/patients/:id/export/pdf', {
     preHandler: [roleGuard('ADMINISTRATOR')],
     config: {
       rateLimit: {
@@ -119,7 +120,7 @@ export function reportRoutes(
   // ─────────────────────────────────────────────────────────────
   // GET /api/v1/patients/:id/export/csv
   // ─────────────────────────────────────────────────────────────
-  app.get('/api/v1/patients/:id/export/csv', {
+  scopedApp.get('/api/v1/patients/:id/export/csv', {
     preHandler: [roleGuard('ADMINISTRATOR')],
     config: {
       rateLimit: {
@@ -156,7 +157,7 @@ export function reportRoutes(
   // ─────────────────────────────────────────────────────────────
   // GET /api/v1/patients/:id/export/json
   // ─────────────────────────────────────────────────────────────
-  app.get('/api/v1/patients/:id/export/json', {
+  scopedApp.get('/api/v1/patients/:id/export/json', {
     preHandler: [roleGuard('ADMINISTRATOR')],
     config: {
       rateLimit: {
@@ -194,7 +195,7 @@ export function reportRoutes(
   // GET /api/v1/audit-log?resourceType=&resourceId=&from=&to=
   // Consulta el log de auditoría (solo ADMINISTRATOR)
   // ─────────────────────────────────────────────────────────────
-  app.get('/api/v1/audit-log', {
+  scopedApp.get('/api/v1/audit-log', {
     preHandler: [roleGuard('ADMINISTRATOR')],
     config: {
       rateLimit: {
@@ -228,5 +229,6 @@ export function reportRoutes(
       const msg = err instanceof Error ? err.message : 'Error al consultar audit log';
       return reply.status(500).send({ error: msg });
     }
+  });
   });
 }
